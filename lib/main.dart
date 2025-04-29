@@ -1,28 +1,50 @@
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(ColorBlindFilterApp());
+  runApp(ColorBlindFilterApp()); //hi
 }
 
 class ColorBlindFilterApp extends StatelessWidget {
+  const ColorBlindFilterApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Colorblind Filter',
+      debugShowCheckedModeBanner: false,
+      // APP THEME AND COLOURS HERE!!!
       theme: ThemeData(
         primarySwatch: Colors.blue,
+        appBarTheme: AppBarTheme(
+          color: const Color.fromARGB(255, 0, 69, 125),
+          titleTextStyle:TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: const Color.fromARGB(255, 92, 181, 255)
+          ),
+        ),
+
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style:ButtonStyle(
+            backgroundColor: WidgetStateProperty.all(const Color.fromARGB(255, 92, 181, 255)),
+            foregroundColor: WidgetStateProperty.all(Colors.white),
+          )
+        )
       ),
       home: InfoPage(),
     );
   }
 }
 
+// INFO PAGE!!!!
 class InfoPage extends StatelessWidget {
+  const InfoPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Colorblind Filter App'),
+        title: Text('DaltoAssist'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
@@ -30,17 +52,19 @@ class InfoPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              'Welcome to the Colorblind Filter App!',
+              'Welcome to DaltoAssist!',
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               textAlign: TextAlign.center,
             ),
             SizedBox(height: 20),
             Text(
-              'This app helps simulate how people with color blindness perceive colors.',
+              'This app aids people with colour blindess',
               style: TextStyle(fontSize: 18),
               textAlign: TextAlign.center,
             ),
             SizedBox(height: 40),
+
+            
             ElevatedButton(
               onPressed: () {
                 Navigator.push(
@@ -65,7 +89,10 @@ class InfoPage extends StatelessWidget {
 }
 
 class ColorFilterPage extends StatefulWidget {
+  const ColorFilterPage({super.key});
+
   @override
+  // ignore: library_private_types_in_public_api
   _ColorFilterPageState createState() => _ColorFilterPageState();
 }
 
