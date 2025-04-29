@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+String colorBlindnessType = "";
+
 void main() {
   runApp(ColorBlindFilterApp()); //hi
 }
@@ -15,6 +17,7 @@ class ColorBlindFilterApp extends StatelessWidget {
       // APP THEME AND COLOURS HERE!!!
       theme: ThemeData(
         primarySwatch: Colors.blue,
+        
         appBarTheme: AppBarTheme(
           color: const Color.fromARGB(255, 0, 69, 125),
           titleTextStyle:TextStyle(
@@ -36,7 +39,7 @@ class ColorBlindFilterApp extends StatelessWidget {
   }
 }
 
-// INFO PAGE!!!!
+// INFO PAGE!!!! - STARTING
 class InfoPage extends StatelessWidget {
   const InfoPage({super.key});
 
@@ -64,7 +67,7 @@ class InfoPage extends StatelessWidget {
             ),
             SizedBox(height: 40),
 
-            
+
             ElevatedButton(
               onPressed: () {
                 Navigator.push(
