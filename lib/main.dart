@@ -1,7 +1,15 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:colourblindness_filter/color_filter.dart';
+import 'package:colourblindness_filter/color_identifier.dart';
+import 'package:colourblindness_filter/color_theory.dart';
 import 'package:flutter_image_filters/flutter_image_filters.dart';
-
+import 'package:colourblindness_filter/home_page.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:colourblindness_filter/image_selected.dart';
+File? file; 
 String colorBlindnessType = "";
+
 
 void main() {
   runApp(ColorBlindFilterApp()); //hi
@@ -10,6 +18,7 @@ void main() {
 class ColorBlindFilterApp extends StatelessWidget {
   const ColorBlindFilterApp({super.key});
 
+// Theme data
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -35,27 +44,44 @@ class ColorBlindFilterApp extends StatelessWidget {
           )
         )
       ),
-      home: InfoPage(),
+      home: const RootPage(),
     );
   }
 }
+// this page sets up nav bars and app bar and the body of it is any page selected through the nav buttons 
+class RootPage extends StatefulWidget {
+  const RootPage ({super.key});
 
-// INFO PAGE!!!! - STARTING
-class InfoPage extends StatelessWidget {
-  const InfoPage({super.key});
+  @override
+  State<RootPage > createState() => _RootPageState();
+}
+
+class _RootPageState extends State<RootPage> {
+  File? file;
   int currentPage = 0;
+ 
+  List<Widget> pages(File? file) => [
+    StartPage(file: file),
+    ColourFilter(file: file),
+    ColorTheory(file: file),
+    ColorIdentifier(file: file),
+    ImageSelector(file: file),
+];  
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // top bar for aesthetic - has app name
       appBar: AppBar(
         title: Text('DaltoAssist'),
       ),
-
+  // bar with all buttons that have main app functions
       bottomNavigationBar: NavigationBar(
         destinations: const [
           NavigationDestination(icon: Icon(Icons.home), label: 'Home'),
-          NavigationDestination(icon: Icon(Icons.person), label: 'Color Filtering'),
+          NavigationDestination(icon: Icon(Icons.camera), label: 'Color Filtering'),
+          NavigationDestination(icon: Icon(Icons.color_lens), label: 'Color Identifier'),
+          NavigationDestination(icon: Icon(Icons.book_sharp), label: 'Learn Color Theory'),
         ],
         onDestinationSelected: (int index){
           setState(() {
@@ -64,149 +90,23 @@ class InfoPage extends StatelessWidget {
         },
         selectedIndex: currentPage, // cannot be index, should be var; SELECTS BUTTON
       ),
+      body: pages(file)[currentPage],
 
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              'Welcome to DaltoAssist!',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              textAlign: TextAlign.center,
-            ),
-            SizedBox(height: 20),
-            Text(
-              'This app aids people with colour blindess',
-              style: TextStyle(fontSize: 18),
-              textAlign: TextAlign.center,
-            ),
-            SizedBox(height: 40),
+    // button that lets user attach an image
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          final picker = ImagePicker();
+          final XFile? result = await picker.pickImage(source: ImageSource.gallery);
+          if (result != null) {
+      setState(() => file = File(result.path));
+      // ignore: avoid_print
+      print("Selected file path: ${file?.path}");
+          }
+          
 
-
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => ColorFilterPage()),
-                );
-              },
-              child: Text('I know my type'),
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                // Test button, does not work yet
-              },
-              child: Text('Take a Test (Coming Soon)'),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class ColorFilterPage extends StatefulWidget {
-  const ColorFilterPage({super.key});
-
-  @override
-  // ignore: library_private_types_in_public_api
-  _ColorFilterPageState createState() => _ColorFilterPageState();
-}
-
-class _ColorFilterPageState extends State<ColorFilterPage> {
-  ColorFilter _selectedFilter = ColorFilter.matrix(_normalMatrix);
-
-  static const List<double> _normalMatrix = [
-    1, 0, 0, 0, 0, //
-    0, 1, 0, 0, 0, //
-    0, 0, 1, 0, 0, //
-    0, 0, 0, 1, 0, //
-  ];
-
-  static const List<double> _protanopiaMatrix = [
-    0.567, 0.433, 0, 0, 0,
-    0.558, 0.442, 0, 0, 0,
-    0, 0.242, 0.758, 0, 0,
-    0, 0, 0, 1, 0,
-  ];
-
-  static const List<double> _deuteranopiaMatrix = [
-    0.625, 0.375, 0, 0, 0,
-    0.7, 0.3, 0, 0, 0,
-    0, 0.3, 0.7, 0, 0,
-    0, 0, 0, 1, 0,
-  ];
-
-  static const List<double> _tritanopiaMatrix = [
-    0.95, 0.05, 0, 0, 0,
-    0, 0.433, 0.567, 0, 0,
-    0, 0.475, 0.525, 0, 0,
-    0, 0, 0, 1, 0,
-  ];
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Color Filter'),
-      ),
-      body: Column(
-        children: [
-          Expanded(
-            child: Center(
-              child: ColorFiltered(
-                colorFilter: _selectedFilter,
-                child: Image.asset(
-                  'images/sample_photo.jpg',
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Wrap(
-              spacing: 10,
-              runSpacing: 10,
-              children: [
-                ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      _selectedFilter = ColorFilter.matrix(_protanopiaMatrix);
-                    });
-                  },
-                  child: Text('Protanopia'),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      _selectedFilter = ColorFilter.matrix(_deuteranopiaMatrix);
-                    });
-                  },
-                  child: Text('Deuteranopia'),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      _selectedFilter = ColorFilter.matrix(_tritanopiaMatrix);
-                    });
-                  },
-                  child: Text('Tritanopia'),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      _selectedFilter = ColorFilter.matrix(_normalMatrix);
-                    });
-                  },
-                  child: Text('Normal View'),
-                ),
-              ],
-            ),
-          ),
-        ],
+             
+        },
+        child: Icon(Icons.add),
       ),
     );
   }
