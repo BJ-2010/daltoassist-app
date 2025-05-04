@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_image_filters/flutter_image_filters.dart';
 
 String colorBlindnessType = "";
 
@@ -42,6 +43,7 @@ class ColorBlindFilterApp extends StatelessWidget {
 // INFO PAGE!!!! - STARTING
 class InfoPage extends StatelessWidget {
   const InfoPage({super.key});
+  int currentPage = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -49,6 +51,20 @@ class InfoPage extends StatelessWidget {
       appBar: AppBar(
         title: Text('DaltoAssist'),
       ),
+
+      bottomNavigationBar: NavigationBar(
+        destinations: const [
+          NavigationDestination(icon: Icon(Icons.home), label: 'Home'),
+          NavigationDestination(icon: Icon(Icons.person), label: 'Color Filtering'),
+        ],
+        onDestinationSelected: (int index){
+          setState(() {
+            currentPage = index;
+          });
+        },
+        selectedIndex: currentPage, // cannot be index, should be var; SELECTS BUTTON
+      ),
+
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(
@@ -143,7 +159,7 @@ class _ColorFilterPageState extends State<ColorFilterPage> {
               child: ColorFiltered(
                 colorFilter: _selectedFilter,
                 child: Image.asset(
-                  'assets/sample_photo.jpg',
+                  'images/sample_photo.jpg',
                   fit: BoxFit.cover,
                 ),
               ),
